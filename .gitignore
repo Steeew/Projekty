@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main()
+{
+	
+	double a;
+	double b;
+	double c;
+	double delta;
+	double root;
+	
+
+	
+	
+	cout << "Wprowadz wspolczynniki a, b, c rownania kwadratowego: " << endl;
+	cout << "a = ";
+	cin >> a;
+	cout << "b = ";
+	cin >> b;
+	cout << "c = ";
+	cin >> c;
+	
+	
+	delta=b*b-4*a*c;
+	root=sqrt(delta);
+	
+	
+	if (a != 0) 
+	{
+		cout << "Rowanie kwadratowe a*x*x + b*x + c = 0 ma ";
+		if (b*b-4*a*c > 0) cout << "dwa rozwiazania x1=" << (-b-root/2*a) << ", x2=" << (-b+root/2*a) ;
+				if (delta < 0) cout << "nie ma rozwiazan";
+				else cout << "jedno rozwiazanie x1=" << (-b)/2*a ;
+				
+	}
+	else cout << "Jest to rownanie liniowe ktora ma jedno rozwiazanie x1=" << -c/b;		
+
+		
+
+
+	
+	
+		
+		
+	return 0;
+	
+	
+	
+}
