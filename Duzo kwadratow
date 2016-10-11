@@ -1,0 +1,73 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+	int x;
+	int j;
+	int i=0;
+	int k;
+	int h;
+	int iloscv;
+	int ilosch;
+	
+	
+	char zn = '#' ;
+	
+	
+	cout << "============================================================" << endl;
+	cout << "=== PROGRAM RYSUJACY KWADRATY O BOKU X SKLADAJACY SIE Z # ===" << endl;
+	cout << "============================================================" << endl << endl << endl;
+	
+	cout << "Wprowadz x nalezace do zbioru <2;50> : ";
+	
+	cin >> x; 
+	cout << "Wprowadz licze kwadratow w pionie: ";
+	cin >> iloscv;
+	cout << "Wprowadz liczbe kwadratow w poziomie: ";
+	cin >> ilosch;
+	cout << endl << endl;
+	
+	
+	if(x<50 and x>2){
+		
+
+while (k<iloscv)
+{
+	k++;
+	while (i<x)
+	{
+		cout << setw(0);	
+			while (h<ilosch)
+			{
+				h++;
+		
+	
+				while (j<x)
+				{
+			
+					j++;
+					cout << zn << ' ';
+				}
+				j=0;
+				cout << setw(3);
+			}	
+		i++;
+		cout << endl;
+		h=0;
+		
+	}
+	cout << endl << endl;
+	i=0;
+
+	
+}
+}
+
+	else cout << "Nie poprawne dane";
+		
+		
+	return 0;
+	
+}
