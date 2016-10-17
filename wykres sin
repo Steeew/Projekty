@@ -1,0 +1,69 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+#include <stdlib.h>
+#include <time.h>
+#include <windows.h>
+using namespace std;
+
+int main()
+{
+	double wyraz[360];
+	double radiany[1000];
+	int i=1;
+	double wartosc;
+	char x='x';
+	double  pr;
+	double a=2;
+	double b=61;
+	double mnoznik;
+	int prr;
+	
+	mnoznik=a/b;
+	cout << "============================" << endl;
+	cout << "=== WYKRES FUNKCJI SIN X ===" << endl;
+	cout << "============================" << endl << endl << endl;
+	
+
+	cout << "   x" << setw(14) << "sinx()x" << setw(10) << "-1" << setw(29) << 0 << setw(29) << "1"<< endl;
+	cout << "-----------------------------------------------------------------------------------------------" << endl;
+	
+	cout << fixed << setprecision(3);
+	
+	wyraz[0]=0;
+	wartosc=sin(wyraz[0]);
+	cout <<"  " <<wyraz[0] << setw(10) << wartosc << setw(40) << x << endl;
+	while (i<=10000000)
+	{
+		wyraz[i]=wyraz[i-1]+5;
+		radiany[i]=wyraz[i]*M_PI/180;
+		wartosc=sin(radiany[i]);
+		
+		if(wyraz[i]==5)
+		{
+		pr=wartosc/mnoznik;
+		prr=round(pr);
+		cout << "  "<< wyraz[i] << setw(10) << wartosc << setw(40+pr) <<x ;
+		cout << endl;
+		}
+		else if(wyraz[i]<100)
+		{
+		pr=wartosc/mnoznik;
+		prr=round(pr);
+		cout << " "<< wyraz[i] << setw(10) << wartosc << setw(40+pr)<< x << endl;
+		}
+		else 
+		{
+		pr=wartosc/mnoznik;
+		prr=round(pr);
+		cout << wyraz[i] << setw(10) << wartosc <<setw(40+pr) << x << endl;
+		}
+	 
+		Sleep(40);
+		i++;	
+	}
+	
+	return 0;
+	
+	
+}
