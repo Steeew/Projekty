@@ -1,0 +1,48 @@
+#include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <time.h>
+using namespace std;
+
+   const int MLP = 50;              // Maksymalna liczba pasa?erów
+   const int LDT = 7; // Liczba dni w tygodniu
+   const int  LG = 12;              // Liczba godzin pomiaru dziennie
+   
+        //Napisz prototypy funkcji
+	void Menu();
+	
+
+int main()
+{  
+  do
+  {
+  	menu()
+  	cin >> opcja;
+	switch(opcja)
+	{
+		case 1:	
+		break;
+	}
+  	
+  	
+  	
+  	
+  	
+  }
+  
+}
+
+
+void Menu()
+{
+	cout << setw(15) << "1. Tablica autobusow" << endl;
+	cout << setw(15) << "2. Liczba pasazerow w ciagu tygodnia" << endl;
+	cout << setw(15) << "3. Liczba pasazerow kazdego dnia" << endl;
+	cout << setw(15) << "4. Maksymalna liczba pasazerow kazdego dnia" << endl;
+	cout << setw(15) << "5. Dla kazdego dnia godzina o ktorej jechalo najmniej pasazerow" << endl;
+	cout << setw(15) << "6. Srednia liczba pasazerow dla kazde godziny" << endl;
+	cout << setw(15) << "7. Sprawdznie przekroczenia progu" << endl;
+	cout << setw(15) << "0. Koniec programu" << endl;
+	cout << endl << setw(15) << "Wybiez opcje" << endl;
+	
+}
