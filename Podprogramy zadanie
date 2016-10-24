@@ -224,7 +224,7 @@ double Funkcja(float tab_wsp[], int st, double x )  // przyklad funkcji rekurenc
 
 
        
-bool Tablicowanie(float xp, float xk, int sampleN, int st, float Tab_wsp_fun, double Tab_Fun)    //uzupelnij kod
+bool Tablicowanie(float xp, float xk, int sampleN, int st, float Tab_wsp_fun[], double Tab_Fun[])    //uzupelnij kod
 {
     double x;
     double delta_x = (xk - xp)/(sampleN - 1);  //xp, xk - poczatkowe i koncowe 
@@ -242,7 +242,7 @@ bool Tablicowanie(float xp, float xk, int sampleN, int st, float Tab_wsp_fun, do
             
     return 1;
 }
-int monoton(double Tab_Fun,int sampleN)  ////uzupelnij kod
+int monoton(double Tab_Fun[],int sampleN)  ////uzupelnij kod
 {
    int mono;
    if(Tab_Fun[0] <= Tab_Fun[1])
@@ -268,7 +268,7 @@ int monoton(double Tab_Fun,int sampleN)  ////uzupelnij kod
     return mono;
 }
             
-int MaxMin(double tab_Fun ,int  sampleN, double& Min,double& Max,double&  mean) //uzupelnij kod
+int MaxMin(double tab_Fun[] ,int  sampleN, double& Min,double& Max,double&  mean) //uzupelnij kod
 {
     double suma = tab_Fun[0];
     Min = tab_Fun[0];        //wartosc minimalna
@@ -288,7 +288,7 @@ int MaxMin(double tab_Fun ,int  sampleN, double& Min,double& Max,double&  mean) 
             
             
     
-int Bisekcja(float xp, float xk, double acc, double& out, float Tab_wsp, int st) //uzupelnij kod
+int Bisekcja(float xp, float xk, double acc, double& out, float Tab_wsp[], int st) //uzupelnij kod
 {
       double c, yp, yk, yc;        //xp-x pocz, xk-x koncowe, acc - 
     //dokladnosc
