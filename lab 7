@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
+
+<xsl:template match="/">
+  <html>
+  <body>
+  <h2>Filmoteka</h2>
+    <table border="1">
+      <tr bgcolor="#0000ff" style="color:#ffffff">
+		<th>Lp.</th>
+        <th>Tytuł polski</th>
+		    <th>Tytuł oryginalny</th>
+		    <th>Reżyseria</th>
+		    <th>Produkcja</th>
+            <th>Rok produkcji</th>
+		    <th>Czas trwania</th>
+		    <th>Gatunek</th>
+		    <th>Obsada</th>
+		</tr>
+	<xsl:apply-templates select="filmoteka/film"/>
+	<xsl:call-template name="separator"/>	
+    </table>
+  </body>
+  </html>
+</xsl:template>
+<xsl:template name="separator">
+		<tr>
+			<th><hr/></th>
+			<th><hr/></th>
+		    <th><hr/></th>
+		    <th><hr/></th>
+		    <th><hr/></th>
+            <th><hr/></th>
+		    <th><hr/></th>
+		    <th><hr/></th>
+		    <th><hr/></th>
+		</tr>
+</xsl:template>
+<xsl:template match="film">
+
+		<tr>
+			<td><xsl:number format="1."/></td>
+			<td><xsl:value-of select="tytul_pol"/></td>
+			<td><xsl:value-of select="tytul_oryg"/></td>
+			<td><xsl:value-of select="rezyser"/></td>
+			<td><xsl:value-of select="kraj"/></td>
+			<td><xsl:value-of select="rok"/></td>
+			<xsl:choose>
+			<xsl:when test="czas_trwania &lt; 120"><td style="color: #00cc00"><xsl:value-of select="czas_trwania"/></td></xsl:when>
+			<xsl:when test="czas_trwania &gt; 150"><td style="color: #cc0000"><xsl:value-of select="czas_trwania"/></td></xsl:when>
+			<xsl:otherwise><td style="color: #e6b800"><xsl:value-of select="czas_trwania"/></td></xsl:otherwise>
+			</xsl:choose>
+			<td><xsl:value-of select="gatunek"/></td>
+			<td><xsl:value-of select="obsada"/></td>
+		</tr>
+		
+</xsl:template>
+			
+			
+</xsl:stylesheet>
