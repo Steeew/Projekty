@@ -1,0 +1,450 @@
+// L6_F0_Z1      
+
+#include<iostream>
+#include<iomanip>
+#include <cstring>
+
+using namespace std;
+
+const int MAX_OS = 20;          // maksymalna liczba osób w tablicy 
+const int D_PES = 11;           // liczba znaków w numerze pesel
+const int D_NAZ = 20;           // maksymalna liczba znaków w nazwisku
+const int D_IM = 10;            // maksymalna liczba znaków w imieniu
+const int D_PES_T = D_PES + 1;  // do u¿ycia w definicji napisu
+const int D_NAZ_T = D_NAZ + 1;  //           -- || --
+const int D_IM_T = D_IM + 1; 
+const int D_Dz = 2;
+const int D_Dz_T = D_Dz + 1;   //           -- || --
+
+
+struct osoba{
+    char pesel[D_PES_T];
+    char imie[D_IM_T];
+    char nazwisko[D_NAZ_T];
+    char dzial[D_Dz_T];
+    int zarobki;
+};
+
+void initialize (osoba L[], int &ile_osob );
+
+void pisz_menu (int nr);
+void menu_main (osoba L[], int ile_osob);
+void menu_szukanie (const osoba L[], const int ile_osob);
+void menu_kasowanie (osoba L[], int &ile_osob);
+void menu_zmienianie (osoba L[], int &ile_osob);
+
+void pisz_naglowek_listy();
+void pisz_osobe(const osoba);
+void lista_osob (const osoba L[] , const int ile_osob );
+void lista_osob_ind (const osoba L[], const int Ind[], const int ile_ind);
+
+void dodanie_osoby (osoba L[], int &ile_osob );
+
+void kasowanie_osoby_pes (osoba L[], int &ile_osob );
+void n_kasowanie_osoby_pes (osoba L[], int &ile_osob );
+
+void bsort (osoba L[], int n );
+
+ int szukaj_pes (const osoba L[], const int ile_osob, char pesel[] );
+ int szukaj_naz (const osoba L[], const int ile_osob, char nazwisko[], int Ind[]);
+void szukanie_wg_pes  (const osoba L[], const int ile_osob);
+void szukanie_wg_naz (const osoba L[], const int ile_osob);
+int szukanie_dzial (const osoba L[], const int ile_osob, char dzial[] );
+void szukanie_wg_dzial (const osoba L[], const int ile_osob);
+
+// ------------------------------------------------------
+int main()
+{
+  osoba L[MAX_OS];    // tablica zawieraj¹ca struktury typu osoba  - g³ówna struktura danych
+  int ile_osob;       // liczba osób w tablicy L 
+  
+  initialize(L,ile_osob);
+  menu_main(L,ile_osob);
+}
+
+// --------------------------------------------------------------- SZUKANIE
+
+// Sprawdzenie czy wœród elementów o indeksach 0..ile_osob-1
+// istnieje element o zadanym numerze pesel:
+//   - je¿eli tak zwraca indeks tego elementu
+//   - je¿eli nie zwraca -1
+// Uwaga: pesel ma w tablicy unikalna wartoœæ
+// -----------------------------------------------------------
+int szukaj_pes (const osoba L[], const int ile_osob, char pesel[])
+{
+    for (int i = 0; i < ile_osob; i++)
+       if (strcmp(L[i].pesel,pesel) == 0) return(i);
+       
+    return(-1);
+}
+
+// Szukanie wedlug numeru PESEL, ktory jest unikalny w tablicy
+// -----------------------------------------------------------
+void szukanie_wg_pes (const osoba L[], const int ile_osob)
+{
+     char pesel[D_PES_T];
+     int ind;
+     
+     cout << "Podaj pesel: ";
+     cin >> pesel;
+     if ((ind = szukaj_pes(L,ile_osob,pesel)) != -1 )
+     {
+        pisz_naglowek_listy();
+        pisz_osobe(L[ind]);
+     }   
+     else
+     {
+       cout << "Nie odnaleziono osoby o numerze pesel " << pesel << endl;
+       system("pause");
+     }   
+}
+
+// Sprawdzenie czy wœród osób o indeksach 0..ile_osob-1 istnieje osoba o zadanym nazwisku:
+//   - je¿eli tak, to zwracana jest tablica Ind zawieraj¹ca indeksy znalezionych osób
+//     natomiast wartoœci¹ funkcji jest iloœæ tych osób
+//   - je¿eli nie, to wartoœci¹ funkcji jest 0 a tablica Ind mo¿e zawieraæ nieokreœlone wartoœci
+// ---------------------------------------------------------------------------------------------
+int szukaj_naz (const osoba L[], const int ile_osob, char nazwisko[], int Ind[])
+{
+    int ile = 0;
+    for (int i = 0; i < ile_osob; i++)
+       if (strcmp(L[i].nazwisko,nazwisko) == 0)  Ind[ile++] = i;
+    return(ile);
+}
+
+
+// Szukanie wedlug NAZWISKA, ktore nie musi byc unikalne w tablicy
+// ----------------------------------------------------------------
+void szukanie_wg_naz (const osoba L[], const int ile_osob)
+{
+     char nazwisko[D_NAZ_T];
+     int Ind[MAX_OS];
+     int ile_ind;
+     
+     cout << "Podaj nazwisko: ";
+     cin >> nazwisko;
+     if ( (ile_ind = szukaj_naz(L,ile_osob,nazwisko,Ind)) != 0 )
+          lista_osob_ind(L,Ind,ile_ind);
+     else
+     {
+       cout << "Nie odnaleziono osoby o nazwisku " << nazwisko << endl;
+       system("pause");
+     }   
+}
+
+// --------------------------------------------------------------- DODAWANIE
+
+
+// Dodanie osoby z kontrol¹ danych:
+//   - przekroczenie maksymalnej liczby osób MAX_OS
+//   - sprawdzenie unikalnoœci numeru pesel
+// -----------------------------------------------------------
+void dodanie_osoby (osoba L[], int &ile_osob)
+{
+  char pesel[D_PES_T];
+  int ind;
+  
+  if (ile_osob < MAX_OS)
+  {
+    cout << "Pesel: ";
+    cin >> pesel;
+    if ( (ind = szukaj_pes(L,ile_osob,pesel)) == -1)  // nie ma
+    {
+      strcpy(L[ile_osob].pesel,pesel);
+      cout << "Nazwisko: ";
+      cin >> L[ile_osob].nazwisko;
+      cout << "Imie: ";
+      cin >> L[ile_osob].imie;
+      ile_osob ++;
+    }
+    else 
+    {
+      cout << "Osoba o numerze pesel " << pesel 
+           << " jest juz zapisana w bazie danych" << endl;
+      pisz_osobe(L[ind]);
+      system("pause");
+    }
+  }
+  else 
+  {
+     cout << "Nie mozna dopisac kolejnej osoby - brak pamieci ;)" << endl;
+     system("pause");
+  }
+}
+
+// ------------------------------------------------------------ KASOWANIE
+
+// Kasowanie osoby o podanym numerze pesel
+// Wersja zachowujaca uporzadkowanie elementow
+// Elementy nastepujace po kasowanym sa przesuwane
+//    ind - indeks usuwanego elementu
+// -----------------------------------------------------
+void kasowanie_osoby_pes (osoba L[], int &ile_osob)
+{
+    char pesel[D_PES_T];
+    int ind;
+    
+    cout << "Podaj PESEL osoby do skasowania: ";
+    cin >> pesel;
+    if ( (ind = szukaj_pes( L, ile_osob, pesel )) != -1 )  // jest
+    {
+       for( int i = ind; i < ile_osob - 1; i++ )
+          L[i] = L[i+1];
+       ile_osob--;
+    }
+    else 
+    {
+      cout << "Nie odnaleziono osoby o numerze pesel " << pesel << endl;
+      system("pause");
+    }
+}
+
+// Kasowanie osoby o podanym numerze PESEL
+// Wersja nie zachowujaca uporzadkowania elementow
+// Element kasowany nadpisywany jest elementem ostatnim
+//    ind - indeks usuwanego elementu
+// -----------------------------------------------------
+void n_kasowanie_osoby_pes (osoba L[], int &ile_osob)
+{
+    char pesel[D_PES_T];
+    int ind;
+    
+    cout << "Podaj pesel osoby do skasowania: ";
+    cin >> pesel;
+    if ( (ind = szukaj_pes( L, ile_osob, pesel )) != -1 ) 
+    {
+       L[ind] = L[ile_osob-1];
+       ile_osob--;
+    }
+}
+
+
+
+// ------------------------------------------------------------- PISANIE
+
+
+void pisz_osobe (const osoba os)
+{
+  cout << setw(sizeof(os.pesel)+2)    << os.pesel;
+  cout << setw(sizeof(os.imie)+2)     << os.imie;
+  cout << setw(sizeof(os.nazwisko)+2) << os.nazwisko; 
+  cout << setw(sizeof(os.dzial)+2) << os.dzial;
+  cout << setw(10) << os.zarobki;
+  
+  cout << endl;
+}
+
+// -----------------------------------------------------
+void pisz_naglowek_listy ()
+{
+  cout << endl;
+  cout << "       pesel     |   imie    |      nazwisko		|	dzial	|	zarobki	|" << endl;
+  cout << "--------------------------------------------------------------------------" << endl;
+}
+
+// -----------------------------------------------------
+void lista_osob (const osoba L[], const int ile_osob)
+{
+  pisz_naglowek_listy();
+  for (int i=0; i<ile_osob; i++)
+     pisz_osobe(L[i]);
+  cout << "---------------------------------------------------" << endl;
+  cout << "#osob = " << ile_osob << endl;
+  cout << endl;
+}
+
+// -----------------------------------------------------
+void lista_osob_ind (const osoba L[], const int Ind[], const int ile_ind)
+{
+  pisz_naglowek_listy();
+  for (int i=0; i<ile_ind; i++)
+     pisz_osobe(L[Ind[i]]);
+  cout << "---------------------------------------------------" << endl;
+  cout << "#osob = " << ile_ind << endl;
+  cout << endl;
+}
+
+// --------------------------------------------------------------- INNE 
+
+// sortowanie niemalejaco wedlug nazwiska
+// ------------------------------------------------------
+void bsort (osoba L[], int n) 
+{
+  osoba buf;
+
+  for (int j=n-2; j>=0; j--)          
+    for (int i=0; i<=j; i++)       
+      if ( strcmp(L[i].nazwisko,L[i+1].nazwisko) > 0)
+      {
+        buf = L[i+1];
+        L[i+1] = L[i];
+        L[i] = buf;
+      }
+}
+
+// ------------------------------------------------------
+void initialize (osoba L[], int &ile_osob)
+{
+  strcpy(L[0].pesel,"12345678901");     
+  strcpy(L[0].imie,"Andrzej"); 
+  strcpy(L[0].nazwisko,"Wilson"); 
+  strcpy(L[0].dzial,"RB"); 
+  L[0].zarobki = 7000;
+
+  strcpy(L[1].pesel,"76548372645");
+  strcpy(L[1].imie,"Piotr");
+  strcpy(L[1].nazwisko,"Nowak");
+  strcpy(L[1].dzial,"HR");
+  L[1].zarobki = 5000;
+
+  strcpy(L[2].pesel,"25349835701");
+  strcpy(L[2].imie,"Marta");
+  strcpy(L[2].nazwisko,"Kowalska");
+  strcpy(L[2].dzial,"IT");
+  L[2].zarobki = 10000;
+
+  ile_osob = 3;
+}
+
+
+// --------------------------------------------------------------  MENU
+void pisz_menu (int nr)
+{
+  switch(nr)
+  {
+    case 1: {
+             cout << endl;
+             cout << "MENU glowne" << endl;
+             cout << "----------------------" << endl;
+             cout << "1 - dodanie osoby "   << endl;
+             cout << "2 - usuniecie osoby"  << endl;
+             cout << "3 - lista osob "      << endl;
+             cout << "4 - sortowanie listy " << endl;
+             cout << "5 - wyszukanie osoby " << endl;
+             cout << "6 - zmiana danych osoby" << endl;
+             cout << "0 - koniec pracy"     << endl;
+             cout << "> ";
+             break;
+            }
+    case 2: {
+             cout << endl;
+             cout << "MENU szukanie" << endl;
+             cout << "----------------------" << endl;
+             cout << "1 - szukanie wg nazwiska "   << endl;
+             cout << "2 - szukanie wg numeru pesel"  << endl;
+             cout << "3 - szukanie wg dzialu" << endl;
+             cout << "0 - wyjscie";
+             cout << "> ";
+             break;
+            }
+    case 3: {
+             cout << endl;
+             cout << "MENU kasowanie" << endl;
+             cout << "----------------------" << endl;
+             cout << "1 - kasowanie wg nazwiska "   << endl;
+             cout << "2 - kasowanie wg numeru pesel"  << endl;
+             cout << "0 - wyjscie";
+             cout << "> ";
+             break;
+            }        
+  }
+}
+
+
+void menu_zmienianie(osoba L[], int &ile_osob)
+{
+            // ...
+}
+
+
+// --------------------------------------------------------
+void menu_kasowanie (osoba L[], int &ile_osob)
+{
+     int wybor;
+     do {
+         pisz_menu(3);
+         cin >> wybor;
+         switch(wybor)
+         {
+           case 1: // ..........
+                   break;
+           case 2: kasowanie_osoby_pes(L,ile_osob);
+                   break;
+         }
+     } while (wybor != 0);
+}
+
+// --------------------------------------------------------
+void menu_szukanie (const osoba L[], const int ile_osob)
+{
+     int wybor;
+     do {
+         pisz_menu(2);
+         cin >> wybor;
+         switch(wybor)
+         {
+           case 1: szukanie_wg_naz(L,ile_osob);
+                   break;
+           case 2: szukanie_wg_pes(L,ile_osob);
+                   break;
+        	case 3: szukanie_wg_dzial(L,ile_osob);
+        		break;
+         }
+     } while (wybor != 0);
+}
+
+// --------------------------------------------------------
+void menu_main (osoba L[], int ile_osob)
+{  
+  int wybor;
+  
+  do {
+     pisz_menu(1);
+     cin >> wybor;
+     switch(wybor)
+     {
+       case 1: dodanie_osoby(L,ile_osob);
+               break;
+       case 2: menu_kasowanie(L,ile_osob);
+               break;
+       case 3: lista_osob(L,ile_osob);
+               break;
+       case 4: bsort(L,ile_osob);
+               break;
+       case 5: menu_szukanie(L,ile_osob);
+               break;
+       case 6: menu_zmienianie(L,ile_osob);
+               break;
+     }
+  } while(wybor!=0); 
+}
+
+// Szukanie wedlug DZIAL
+// ----------------------------------------------------------------
+int szukaj_dzial (const osoba L[], const int ile_osob, char dzial[], int Ind[])
+{
+    int ile = 0;
+    for (int i = 0; i < ile_osob; i++)
+       if (strcmp(L[i].dzial,dzial) == 0)  Ind[ile++] = i;
+    return(ile);
+}
+
+
+// Szukanie wedlug DZIAL
+// ----------------------------------------------------------------
+void szukanie_wg_dzial (const osoba L[], const int ile_osob)
+{
+     char dzial[D_Dz_T];
+     int Ind[MAX_OS];
+     int ile_ind;
+     
+     cout << "Podaj dzial: ";
+     cin >> dzial;
+     if ( (ile_ind = szukaj_dzial(L,ile_osob,dzial,Ind)) != 0 )
+          lista_osob_ind(L,Ind,ile_ind);
+     else
+     {
+       cout << "Nie odnaleziono osoby z dzialu " << dzial << endl;
+       system("pause");
+     }   
+}
