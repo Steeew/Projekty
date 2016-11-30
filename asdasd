@@ -1,0 +1,14 @@
+	time_t now;
+	int sec;
+	now =time(null);
+	
+	
+	
+	
+	Sleep(10098);
+	
+	
+	sec = difftime(time(NULL), now);
+	cout << sec;
+	
+	
