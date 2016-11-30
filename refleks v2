@@ -1,0 +1,462 @@
+#include <iostream>
+#include <time.h>
+#include <cstdlib>
+#include <conio.h> // przycisk
+#include <stdlib.h> // funckcja sleep()
+#include <windows.h>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+const int szerokosc = 40;
+const int wysokosc = 40;
+char budulec = 219;
+int licznik_figur = 0;
+int tab_f[1000];
+int pozostaly_czas = 60;
+int tablica_odpowiedzi[1000];
+double czas[1000];
+int poprawne_p = 0;
+int przycisk_a = 97;
+int przycisk_w = 119;
+int przycisk_s = 115;
+int przycisk_d = 100;
+
+int generuj_tab_f(int tab[])
+{
+	for(int i=0; i<1000; i++)
+	{
+		tab[i] = rand()%4 + 1;
+	}
+}
+
+
+void menu_L()
+{
+	for(int i=0; i<3; i++)
+	{
+		cout << "#";
+	}	
+	
+}
+void menu_2()
+{
+	menu_L();
+	for(int i=0; i<54; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+}
+
+
+void menu()
+{
+	for(int i=0; i<60; i++)
+	{
+		cout << "#";
+	}
+	cout << endl;
+	menu_2();
+	cout << endl;
+	menu_L();
+	for(int i=0; i<23; i++)
+	{
+		cout << "-";
+	}
+	cout << "REFLEKS" ;
+	for(int i=0; i<24; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+	cout << endl;
+	menu_2();
+	cout << endl;
+	for(int i=0; i<60; i++)
+	{
+		cout << "#";
+	}	
+	
+	
+	
+	cout << endl << endl;
+	cout << setw(33)<< " M E N U" << endl << endl;
+	
+	cout << "1. Nowa gra" << endl;
+	cout << "2. Tablica wynikow." << endl;
+	cout << "0. Zakoncz program." << endl << endl;
+	cout << "Wybierz opcje : " ;
+	
+}
+
+void SetWindow(int Width, int Height)
+    {
+    _COORD coord;
+    coord.X = Width;
+    coord.Y = Height;
+
+    _SMALL_RECT Rect;
+    Rect.Top = 0;
+    Rect.Left = 0;
+    Rect.Bottom = Height - 1;
+    Rect.Right = Width - 1;
+
+    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);      // Get Handle
+    SetConsoleScreenBufferSize(Handle, coord);            // Set Buffer Size
+    SetConsoleWindowInfo(Handle, TRUE, &Rect);            // Set Window Size
+    }
+
+double reaction_time() // Pomiar czasu rekacji po kliknieciu dowolnego przyciski
+{
+	clock_t start, stop;
+	double time;
+	
+	start = clock();
+	getch();
+	stop = clock();
+	time = (double)(stop-start) / CLOCKS_PER_SEC;
+	cout << time;
+}
+
+void setcolor(unsigned short color)
+{
+	HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hcon,color);
+}
+
+void przerwa()
+{
+
+	for(int ile=0; ile<2; ile++)
+	{
+		for(int top=0; top<60; top++)
+		{
+			cout << " ";
+		}
+	cout << endl;
+	}
+}
+
+void kwadrat()
+{
+	przerwa();
+	for(int x=0; x<=40; x++)
+	{
+		cout << setw(10);
+		for(int y=0; y<=40; y++)
+		{
+			cout << budulec ;
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		cout << endl;
+	}
+	przerwa();
+	
+}
+void kolo()
+{
+	przerwa();
+	char tab[40][40];
+	
+	for(int y=39; y>=0; y--)
+	{
+		cout << setw(11);
+		for(int x=0; x<=39; x++)
+		{
+			if(pow((x-20),2) + pow((y-20),2) < 400)
+			{
+				tab[x][y] = budulec;
+			}
+			else
+			{
+				tab[x][y] = ' ';
+			}
+			cout << tab[x][y];
+			
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		
+		cout << endl;
+	}
+	
+	przerwa();
+}
+
+void trojkat()
+{
+	przerwa();
+	for(int x=0; x<40; x++)
+	{
+		cout << setw(10);
+		for(int y=(40-x)/2; y>=0; y--)
+		{
+			cout << " ";
+	
+		}
+		for(int b=0;b<=x; b++)
+		{
+			cout << budulec;
+		}
+		for(int y=(40-x)/2; y>=0; y--)
+		{
+			cout << " ";
+	
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		cout << endl;
+		
+	}
+	przerwa();	
+}
+
+void romb()
+{
+	przerwa();
+	char tab[40][40];
+	
+	for(int y=39; y>=0; y--)
+	{
+		cout << setw(11);
+		for(int x=0; x<=39; x++)
+		{
+			if(y<0.94*x+17.18 and y<-x+56 and y>-x+23 and y>1.0625*x+-18.25   )
+			{
+				tab[x][y] = budulec;
+			}
+			else
+			{
+				tab[x][y] = ' ';
+			}
+			cout << tab[x][y];
+			
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		
+		cout << endl;
+	}	
+	
+	przerwa();
+}
+
+
+void random_color()
+{
+	srand(time(NULL));
+	int random = rand()%12+1; // ilosc kontrastujacych kolorow
+	switch(random)
+	{
+		case 1:
+		{
+			setcolor(236); //zolto-czerwony
+		}
+		break;
+		case 2:
+		{
+			setcolor(234); // zolto-zielony
+		}
+		break;
+		case 3:
+		{
+			setcolor(233); // zolot niebieski
+		}
+		break;
+		case 4:
+		{
+			setcolor(202); // czerwono-zielony
+		}
+		break;
+		case 5:
+		{
+			setcolor(206); // czerwono-zolty
+		}
+		break;
+		case 6:
+		{
+			setcolor(201); // czerwono-niebieski
+		}
+		break;
+		case 7:
+		{
+			setcolor(172); // zielono-czerwony
+		}
+		break;
+		case 8:
+		{
+			setcolor(174); // zielono-zolty
+		}
+		break;
+		case 9:
+		{
+			setcolor(169); // zielono-niebieski
+		}
+		break;
+		case 10:
+		{
+			setcolor(154); // niebiesko-zielony
+		}
+		break;
+		case 11:
+		{
+			setcolor(156); // niebiesko-czerwony
+		}
+		break;
+		case 12:
+		{
+			setcolor(158); // niebiesko-zolty
+		}
+		break;
+		
+	}
+}
+
+void wsad()
+{
+
+	setcolor(15);
+	cout << endl << endl;
+	menu_2();
+	cout << endl;
+	cout << setw(38) << "[W] : Kwadrat" << endl;
+	cout << "[A] : Kolo" << setw(50) << "[D]: Trojkat" << endl;
+	cout << setw(35) << "[S] : Romb";
+	cout << endl;
+	menu_2();
+}
+void panel()
+{
+	menu_2();
+	cout << endl;
+	cout << "LICZNIK FIGUR : " << licznik_figur << setw(40) << "POZOSTALY CZAS : " << pozostaly_czas << endl;
+	menu_2();
+	cout << endl;
+}
+
+int generuj_losowe_figury()
+{
+	for(int i=0; i<1000; i++)
+	{
+		tab_f[i] = rand()%4+1;
+	}
+	return *tab_f;
+}
+
+void losowe_figury(int tab[], int i)
+{
+
+	switch(tab[i])
+	{
+	case 1: kwadrat();
+	break;
+	case 2: kolo();
+	break;
+	case 3: trojkat();
+	break;
+	case 4: romb();
+	break;
+	}
+
+}
+
+
+int main()
+{
+	SetWindow(60,80);
+	int opcja;
+	do
+	{
+		system("CLS");
+		menu();
+		cin >> opcja;
+		switch(opcja)
+		{
+			case 1:
+			{
+				generuj_tab_f(tab_f);
+				
+				time_t now;
+				time = 
+				
+				
+				do
+				{
+					system("CLS");
+					panel();
+				
+					int licznik_tab ;
+					random_color();
+				    losowe_figury(tab_f, licznik_tab);
+					cout << tab_f[licznik_tab];
+					wsad();
+					
+					clock_t start, stop;
+					double time;
+					
+					start = clock();
+					
+					tablica_odpowiedzi[licznik_tab] = getch();
+					if(tablica_odpowiedzi[licznik_tab] == przycisk_a)
+					{
+						if(tab_f[licznik_tab] == 2)
+						{
+							poprawne_p++;
+						}
+					}
+					else if(tablica_odpowiedzi[licznik_tab] == przycisk_w)
+					{
+						if(tab_f[licznik_tab] == 1)
+						{
+							poprawne_p++;
+						}
+					}
+					else if(tablica_odpowiedzi[licznik_tab] == przycisk_s)
+					{
+						if(tab_f[licznik_tab] == 4)
+						{
+							poprawne_p++;
+						}
+					}					
+					else if(tablica_odpowiedzi[licznik_tab] == przycisk_d)
+					{
+						if(tab_f[licznik_tab] == 3)
+						{
+							poprawne_p++;
+						}						
+					}					
+					
+					
+					stop = clock();
+					czas[licznik_tab] = (double)(stop-start) / CLOCKS_PER_SEC;
+					
+					cout << czas[licznik_tab];
+					
+					licznik_tab++;	
+					licznik_figur++;
+					
+					
+					
+					
+				}while(true);
+			
+
+				
+			
+			}
+			break;
+		}
+		
+	}while(opcja);
+	return 0;
+}
