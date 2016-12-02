@@ -1,0 +1,685 @@
+#include <iostream>
+#include <time.h>
+#include <cstdlib>
+#include <conio.h> // przycisk
+#include <stdlib.h> // funckcja sleep()
+#include <windows.h>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+const int szerokosc = 40;
+const int wysokosc = 40;
+char budulec = 219;
+int licznik_figur = 0;
+int tab_f[1000];
+int pozostaly_czas = 60;
+int tablica_odpowiedzi[1000];
+double czas[1000];
+int poprawne_p = 0;
+int przycisk_a = 97;
+int przycisk_w = 119;
+int przycisk_s = 115;
+int przycisk_d = 100;
+int licznik_tab ;
+double czas_kwadrat[1000];
+double czas_kolo[1000];
+double czas_romb[1000];
+double czas_trojkat[1000];
+int licznik_tab_kwadrat = -1;
+int licznik_tab_kolo = -1;
+int licznik_tab_romb = -1;
+int licznik_tab_trojkat = -1;
+int poprawne_kwadrat;
+int poprawne_kolo;
+int poprawne_romb;
+int poprawne_trojkat;
+
+
+
+double sredni_czas_all()
+{
+	double suma;
+	for(int i=0; i<poprawne_p; i++)
+	{
+		suma = suma + czas[i];
+	}
+	double srednia;
+	srednia = suma / poprawne_p;
+	return srednia;
+}
+
+double max_czas()
+{
+	double max;
+	max = czas[0];
+	
+	for(int i=1; i<licznik_tab; i++)
+	{
+		if(czas[i] > max)
+		{
+			max = czas[i];
+		}
+	}
+	return max;
+}
+
+double min_czas()
+{
+	double min;
+	min = czas[0];
+	
+	for(int i=1; i<licznik_tab; i++)
+	{
+		if(czas[i] < min)
+		{
+			min = czas[i];
+		}
+	}
+	return min;
+}
+
+double sredni_czas_kolo(int a, double tab[])
+{
+	double suma;
+	for(int i=0; i<a; i++)
+	{
+		suma = suma + tab[i];
+	}
+	double srednia;
+	srednia = suma / a;
+	cout << srednia;
+}
+
+double sredni_czas_romb(int a, double tab[])
+{
+	double suma;
+	for(int i=0; i<a; i++)
+	{
+		suma = suma + tab[i];
+	}
+	double srednia;
+	srednia = suma / a;
+	cout << srednia;
+}
+
+double sredni_czas_trojkat(int a, double tab[])
+{
+	double suma;
+	for(int i=0; i<a; i++)
+	{
+		suma = suma + tab[i];
+	}
+	double srednia;
+	srednia = suma / a;
+	cout << srednia;
+}
+
+
+double sredni_czas_kwadrat(int a, double tab[])
+{
+	double suma;
+	for(int i=0; i<a; i++)
+	{
+		suma = suma + tab[i];
+	}
+	double srednia;
+	srednia = suma / a;
+	cout << srednia;
+}
+
+
+int generuj_tab_f(int tab[])
+{
+	for(int i=0; i<1000; i++)
+	{
+		tab[i] = rand()%4 + 1;
+	}
+}
+
+void tabela_wynikow_top()
+{
+	for(int i=0; i<60; i++)
+	{
+		cout << '_';
+	}
+}
+
+void tabela_wynikow()
+{
+	tabela_wynikow_top();
+	cout << endl;
+	cout << setw(40) << '|' <<endl;
+	cout << setw(37) << "Ilosc rozpoznanych figur" << setw(3) << '|' << setw(11) <<  poprawne_p ;
+	cout << endl;
+	cout << setw(40) << '|' <<endl;
+	tabela_wynikow_top();
+	cout << endl; 
+	cout << setw(40) << '|' <<endl;
+	cout << setw(37) << "Najkrotszy czas rozpoznawania" << setw(3) << '|' << setw(11) << setprecision(10) <<  min_czas() ;
+	cout << endl;
+	cout << setw(40) << '|' <<endl;
+	tabela_wynikow_top();
+	cout << endl; 
+	cout << setw(40) << '|' <<endl;
+	cout << setw(37) << "Najdluzszy czas rozpoznawania" << setw(3) << '|' << setw(11) << setprecision(3) <<  max_czas() ;
+	cout << endl;
+	cout << setw(40) << '|' <<endl;
+	tabela_wynikow_top();
+	cout << endl; 
+	cout << setw(40) << '|' <<endl;
+	cout << setw(37) << "Sredni czas rozpoznawania" << setw(3) << '|' << setw(11) << setprecision(3) << sredni_czas_all() ;
+	cout << endl;
+	cout << setw(40) << '|' <<endl;
+	tabela_wynikow_top();
+	
+	
+	
+}
+
+
+void menu_L()
+{
+	for(int i=0; i<3; i++)
+	{
+		cout << "#";
+	}	
+	
+}
+void menu_2()
+{
+	menu_L();
+	for(int i=0; i<54; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+}
+
+void menu_koniec()
+{
+	menu_2();
+	cout << endl;
+	menu_L();
+	for(int i=0; i<17; i++)
+	{
+		cout << "-";
+	}
+	cout << "K O N I E C   G R Y ";
+		for(int i=0; i<17; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+	cout << endl;
+	menu_2();	
+}
+
+
+void menu()
+{
+	for(int i=0; i<60; i++)
+	{
+		cout << "#";
+	}
+	cout << endl;
+	menu_2();
+	cout << endl;
+	menu_L();
+	for(int i=0; i<23; i++)
+	{
+		cout << "-";
+	}
+	cout << "REFLEKS" ;
+	for(int i=0; i<24; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+	cout << endl;
+	menu_2();
+	cout << endl;
+	for(int i=0; i<60; i++)
+	{
+		cout << "#";
+	}	
+	
+	
+	
+	cout << endl << endl;
+	cout << setw(33)<< " M E N U" << endl << endl;
+	
+	cout << "1. Nowa gra" << endl;
+	cout << "2. Tablica wynikow." << endl;
+	cout << "0. Zakoncz program." << endl << endl;
+	cout << "Wybierz opcje : " ;
+	
+}
+
+void SetWindow(int Width, int Height)
+    {
+    _COORD coord;
+    coord.X = Width;
+    coord.Y = Height;
+
+    _SMALL_RECT Rect;
+    Rect.Top = 0;
+    Rect.Left = 0;
+    Rect.Bottom = Height - 1;
+    Rect.Right = Width - 1;
+
+    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);      // Get Handle
+    SetConsoleScreenBufferSize(Handle, coord);            // Set Buffer Size
+    SetConsoleWindowInfo(Handle, TRUE, &Rect);            // Set Window Size
+    }
+
+double reaction_time() // Pomiar czasu rekacji po kliknieciu dowolnego przyciski
+{
+	clock_t start, stop;
+	double time;
+	
+	start = clock();
+	getch();
+	stop = clock();
+	time = (double)(stop-start) / CLOCKS_PER_SEC;
+	cout << time;
+}
+
+void setcolor(unsigned short color)
+{
+	HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hcon,color);
+}
+
+void przerwa()
+{
+
+	for(int ile=0; ile<2; ile++)
+	{
+		for(int top=0; top<60; top++)
+		{
+			cout << " ";
+		}
+	cout << endl;
+	}
+}
+
+void kwadrat()
+{
+	przerwa();
+	for(int x=0; x<=40; x++)
+	{
+		cout << setw(10);
+		for(int y=0; y<=40; y++)
+		{
+			cout << budulec ;
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		cout << endl;
+	}
+	przerwa();
+	
+}
+void kolo()
+{
+	przerwa();
+	char tab[40][40];
+	
+	for(int y=39; y>=0; y--)
+	{
+		cout << setw(11);
+		for(int x=0; x<=39; x++)
+		{
+			if(pow((x-20),2) + pow((y-20),2) < 400)
+			{
+				tab[x][y] = budulec;
+			}
+			else
+			{
+				tab[x][y] = ' ';
+			}
+			cout << tab[x][y];
+			
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		
+		cout << endl;
+	}
+	
+	przerwa();
+}
+
+void trojkat()
+{
+	przerwa();
+	for(int x=0; x<40; x++)
+	{
+		cout << setw(10);
+		for(int y=(40-x)/2; y>=0; y--)
+		{
+			cout << " ";
+	
+		}
+		for(int b=0;b<=x; b++)
+		{
+			cout << budulec;
+		}
+		for(int y=(40-x)/2; y>=0; y--)
+		{
+			cout << " ";
+	
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		cout << endl;
+		
+	}
+	przerwa();	
+}
+
+void romb()
+{
+	przerwa();
+	char tab[40][40];
+	
+	for(int y=39; y>=0; y--)
+	{
+		cout << setw(11);
+		for(int x=0; x<=39; x++)
+		{
+			if(y<0.94*x+17.18 and y<-x+56 and y>-x+23 and y>1.0625*x+-18.25   )
+			{
+				tab[x][y] = budulec;
+			}
+			else
+			{
+				tab[x][y] = ' ';
+			}
+			cout << tab[x][y];
+			
+		}
+		for(int i=0; i<10; i++)
+		{
+			cout << " ";
+		}
+		
+		cout << endl;
+	}	
+	
+	przerwa();
+}
+
+
+void random_color()
+{
+	srand(time(NULL));
+	int random = rand()%12+1; // ilosc kontrastujacych kolorow
+	switch(random)
+	{
+		case 1:
+		{
+			setcolor(236); //zolto-czerwony
+		}
+		break;
+		case 2:
+		{
+			setcolor(234); // zolto-zielony
+		}
+		break;
+		case 3:
+		{
+			setcolor(233); // zolot niebieski
+		}
+		break;
+		case 4:
+		{
+			setcolor(202); // czerwono-zielony
+		}
+		break;
+		case 5:
+		{
+			setcolor(206); // czerwono-zolty
+		}
+		break;
+		case 6:
+		{
+			setcolor(201); // czerwono-niebieski
+		}
+		break;
+		case 7:
+		{
+			setcolor(172); // zielono-czerwony
+		}
+		break;
+		case 8:
+		{
+			setcolor(174); // zielono-zolty
+		}
+		break;
+		case 9:
+		{
+			setcolor(169); // zielono-niebieski
+		}
+		break;
+		case 10:
+		{
+			setcolor(154); // niebiesko-zielony
+		}
+		break;
+		case 11:
+		{
+			setcolor(156); // niebiesko-czerwony
+		}
+		break;
+		case 12:
+		{
+			setcolor(158); // niebiesko-zolty
+		}
+		break;
+		
+	}
+}
+
+void wsad()
+{
+
+	setcolor(15);
+	cout << endl << endl;
+	menu_2();
+	cout << endl;
+	cout << setw(38) << "[W] : Kwadrat" << endl;
+	cout << "[A] : Kolo" << setw(50) << "[D]: Trojkat" << endl;
+	cout << setw(35) << "[S] : Romb";
+	cout << endl;
+	menu_2();
+}
+void panel(int sec)
+{
+	menu_2();
+	cout << endl;
+	cout << "LICZNIK FIGUR : " << licznik_figur << setw(40) << "POZOSTALY CZAS : " << 60-sec << endl;
+	menu_2();
+	cout << endl;
+}
+
+int generuj_losowe_figury()
+{
+	for(int i=0; i<1000; i++)
+	{
+		tab_f[i] = rand()%4+1;
+	}
+	return *tab_f;
+}
+
+void losowe_figury(int tab[], int i)
+{
+
+	switch(tab[i])
+	{
+	case 1: kwadrat();
+	break;
+	case 2: kolo();
+	break;
+	case 3: trojkat();
+	break;
+	case 4: romb();
+	break;
+	}
+
+}
+
+
+int main()
+{
+	SetWindow(60,60);
+	int opcja;
+	do
+	{
+		system("CLS");
+		menu();
+		cin >> opcja;
+		switch(opcja)
+		{
+			case 1:
+			{
+				generuj_tab_f(tab_f);
+				
+				clock_t start_g, stop_g;
+				double sec;
+				start_g = clock();
+				
+				do
+				{
+					system("CLS");
+					panel(sec);
+				
+					random_color();
+				    losowe_figury(tab_f, licznik_tab);
+					wsad();
+					
+					clock_t start, stop;
+					double time;
+					
+					start = clock();
+					
+					tablica_odpowiedzi[licznik_tab] = getch();
+					if(tablica_odpowiedzi[licznik_tab] == przycisk_a)
+					{
+						if(tab_f[licznik_tab] == 2)
+						{
+							poprawne_p++;
+							poprawne_kolo++;
+							licznik_tab_kolo++;
+							stop = clock();
+							czas[licznik_tab] = (double)(stop-start) / CLOCKS_PER_SEC;
+							czas_kolo[licznik_tab_kolo] = czas[licznik_tab];
+							
+						}
+						else
+						{
+							czas[licznik_tab] = 0;
+							czas_kolo[licznik_tab_kolo] = 0;
+							poprawne_kolo++;
+						}
+					}
+					else if(tablica_odpowiedzi[licznik_tab] == przycisk_w)
+					{
+						if(tab_f[licznik_tab] == 1)
+						{
+							poprawne_p++;
+							poprawne_kwadrat++;
+							licznik_tab_kwadrat++;
+							stop = clock();
+							czas[licznik_tab] = (double)(stop-start) / CLOCKS_PER_SEC;
+							czas_kwadrat[licznik_tab_kwadrat] = czas[licznik_tab];
+						}
+						else
+						{
+							czas[licznik_tab] = 0;
+							czas_kwadrat[licznik_tab_kwadrat] = 0;
+							poprawne_kwadrat++;
+						}
+					}
+					else if(tablica_odpowiedzi[licznik_tab] == przycisk_s)
+					{
+						if(tab_f[licznik_tab] == 4)
+						{
+							poprawne_p++;
+							poprawne_romb++;
+							licznik_tab_romb++;
+							stop = clock();
+							czas[licznik_tab] = (double)(stop-start) / CLOCKS_PER_SEC;
+							czas_romb[licznik_tab_romb] = czas[licznik_tab];
+						}
+						else
+						{
+							czas[licznik_tab] = 0;
+							czas_romb[licznik_tab_romb] = 0;
+							poprawne_romb++;
+						}
+					}					
+					else if(tablica_odpowiedzi[licznik_tab] == przycisk_d)
+					{
+						if(tab_f[licznik_tab] == 3)
+						{
+							poprawne_p++;
+							poprawne_trojkat++;
+							licznik_tab_trojkat++;
+							stop = clock();
+							czas[licznik_tab] = (double)(stop-start) / CLOCKS_PER_SEC;
+							czas_trojkat[licznik_tab_trojkat] = czas[licznik_tab];
+						}	
+						else
+						{
+							czas[licznik_tab] = 0;
+							czas_trojkat[licznik_tab_trojkat] = 0;
+							poprawne_trojkat++;
+						}		
+					}
+					
+					
+					
+					
+					licznik_tab++;	
+					licznik_figur++;
+					stop_g = clock();
+					sec = (double)(stop_g-start_g) / CLOCKS_PER_SEC;
+					
+				}while(sec < 60);
+				system("CLS");
+				
+				menu_koniec();
+				cout << endl << endl;
+				cout << setw(43) << "T A B E L A   W Y N I K O W";		
+				cout << endl << endl;
+				tabela_wynikow();
+				
+				cout << endl << endl;
+				
+				sredni_czas_kolo(poprawne_kolo,czas_kolo);
+				cout << endl;
+				sredni_czas_kolo(poprawne_kwadrat,czas_kwadrat);
+				cout << endl;
+				sredni_czas_kolo(poprawne_trojkat,czas_trojkat);
+				cout << endl;
+				sredni_czas_kolo(poprawne_romb,czas_romb);
+				cout << endl;
+						
+				int jeden;
+				cin >> jeden; 
+				
+			}
+			break;
+		}
+		
+	}while(opcja);
+	return 0;
+}
