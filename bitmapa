@@ -1,0 +1,645 @@
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+#include <iomanip>
+#include <conio.h>
+#include <stdlib.h>
+
+using namespace std;
+
+void drugi_wybor()
+{
+	system("CLS");
+	cout << "Wybierz kolor do wyodrebnienia: "<< endl << endl;
+	cout << "1. Niebieski (B)" << endl;
+	cout << "2. Zielony (G)"<< endl;
+	cout << "3. Czerwony (R)" << endl;
+	cout << "0. Powrot" << endl;
+}
+
+void menu_L()
+{
+	for(int i=0; i<3; i++)
+	{
+		cout << "#";
+	}	
+}
+
+void menu_2()
+{
+	menu_L();
+	for(int i=0; i<54; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+}
+
+
+void menu()
+{
+	for(int i=0; i<60; i++)
+	{
+		cout << "#";
+	}
+	cout << endl;
+	menu_2();
+	cout << endl;
+	menu_L();
+	for(int i=0; i<23; i++)
+	{
+		cout << "-";
+	}
+	cout << "BITMAPA" ;
+	for(int i=0; i<24; i++)
+	{
+		cout << "-";
+	}
+	menu_L();
+	cout << endl;
+	menu_2();
+	cout << endl;
+	for(int i=0; i<60; i++)
+	{
+		cout << "#";
+	}	
+	cout << endl << endl;
+	cout << setw(33)<< " M E N U" << endl << endl;
+	
+	cout << "1. Skala szarosci" << endl;
+	cout << "2. Wyodrebnienie koloru." << endl;
+	cout << "3. Rozmycie" << endl;
+	cout << "0. Wyjscie" << endl << endl;
+	cout << "Wybierz opcje : " ;
+}
+
+void info(int a, int b, int c)
+{
+	int opcja;
+	do
+	{
+	cout << endl << endl;
+	cout << "Poprawna edycja pliku!";
+	cout << endl << endl;
+	cout << "Informacje o pliku:";
+	cout << endl << endl;
+	cout << "Wysokosci: " << a << " pikseli"<< endl;
+	cout << "Szerokosc: " << b << " pikseli"<< endl;
+	cout << "Rozmiar pliku: " << c << " bajtow" << endl; 	
+	cout << endl;
+	cout << "Aby powrocic wybierz wpisz 0: ";
+	cin >> opcja;
+	}while(opcja);
+	 
+}
+
+
+typedef struct BMPFILEHEADER
+{
+	short type;
+	int fileSize;
+	short reserved0;
+    short reserved1;
+    int dataOffset;
+}naglowek;
+
+typedef struct BMPINFOHEADER
+{
+	int biSize;
+	int biWidth;
+	int biHeight;
+	short biPlanes;
+	short biBitCount;
+	int biCompression;
+	int biSizeImage;
+	int biXPelsPerMeter;
+	int biYPelsPerMeter;
+	int biClrUsed;
+	bool biClrImportant;
+	bool biClrRotation;	
+}bib;
+
+typedef struct RGB
+{
+	unsigned char R;
+    unsigned char G;
+    unsigned char B;
+}PixelRGB;
+
+
+void skala_szarosci(const char * nazwaPliku)
+{
+	FILE *plik, *plik2;
+	naglowek FileInfo;
+	bib PictureInfo;
+	char szary;
+	int i, j;
+	short padding;
+	
+	
+					
+					
+	if(plik = fopen(nazwaPliku,"rb"))
+	{
+		//FileInfo
+		fread(&FileInfo.type,2,1,plik);
+        fread(&FileInfo.fileSize,4,1,plik); // rozmiar calego pliku w bitach
+        fread(&FileInfo.reserved0,2,1,plik);
+        fread(&FileInfo.reserved1,2,1,plik);
+        fread(&FileInfo.dataOffset,4,1,plik); // poczatkowy adres bitow w tablicy pikseli
+        
+        //PictureInfo
+		fread(&PictureInfo.biSize,4,1,plik);
+        fread(&PictureInfo.biWidth,4,1,plik);
+        fread(&PictureInfo.biHeight,4,1,plik);
+        fread(&PictureInfo.biPlanes,2,1,plik);
+        fread(&PictureInfo.biBitCount,2,1,plik); 
+    	fread(&PictureInfo.biCompression,4,1,plik);
+    	fread(&PictureInfo.biSizeImage,4,1,plik);
+        fread(&PictureInfo.biXPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biYPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biClrUsed,4,1,plik);
+        fread(&PictureInfo.biClrImportant,1,1,plik);
+        fread(&PictureInfo.biClrRotation,1,1,plik);
+          				
+		
+
+
+		PixelRGB pixmap[PictureInfo.biWidth][PictureInfo.biHeight];
+		
+		//obliczenie wyrównania wiersza do wielokrotności 4B
+        if ((PictureInfo.biWidth * 3) % 4 != 0) padding = 4 - ((PictureInfo.biWidth * 3) % 4);
+		//wczytywanie bitmapy do pixmapy
+		fseek(plik, FileInfo.dataOffset,SEEK_SET);
+		for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik, padding, SEEK_CUR))
+			for(j = 0; j < PictureInfo.biWidth; j++)
+			{
+                pixmap[i][j].B = fgetc(plik); 
+                pixmap[i][j].G = fgetc(plik);
+                pixmap[i][j].R = fgetc(plik);
+            }
+        
+		//operacje na nowym pliku    
+        if(plik2 = fopen("nowy3.bmp","wb"))
+           {        
+		   		//kopiowanie pliku
+                fseek(plik, 0, SEEK_END);
+                j = ftell(plik);
+                fseek(plik, 0, SEEK_SET);
+                for(i = 0; i < j; i++)
+                    fputc(fgetc(plik), plik2);
+                //zapis bitmapy + konwersja do szarości                      
+                fseek(plik2, FileInfo.dataOffset, SEEK_SET);
+                for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik2, padding, SEEK_CUR))
+                    for(j = 0; j < PictureInfo.biWidth; j++)
+                    {
+                        szary = (char)(0.229*pixmap[i][j].R + 0.587*pixmap[i][j].G + 0.114*pixmap[i][j].B);
+     					fputc(szary, plik2);
+                    	fputc(szary, plik2);
+						fputc(szary, plik2);
+						
+                    }
+                fclose(plik2); 
+                
+              	//Informacje o poprawnosci dzialania, wysokosc, szerokosc, rozmiar
+              	
+                info(PictureInfo.biHeight, PictureInfo.biWidth, PictureInfo.biSizeImage);
+				
+                
+           }
+           else cout << "Blad w odczycie pliku";  
+		
+		
+	}else cout << "Blad w odczycie pliku";
+}
+
+void wyodrebnienieR(const char * nazwaPliku)
+{
+	FILE *plik, *plik2;
+	naglowek FileInfo;
+	bib PictureInfo;
+	int i, j;
+	short padding;
+	
+	
+					
+					
+	if(plik = fopen(nazwaPliku,"rb"))
+	{
+		//FileInfo
+		fread(&FileInfo.type,2,1,plik);
+        fread(&FileInfo.fileSize,4,1,plik); // rozmiar calego pliku w bitach
+        fread(&FileInfo.reserved0,2,1,plik);
+        fread(&FileInfo.reserved1,2,1,plik);
+        fread(&FileInfo.dataOffset,4,1,plik); // poczatkowy adres bitow w tablicy pikseli
+        
+        //PictureInfo
+		fread(&PictureInfo.biSize,4,1,plik);
+        fread(&PictureInfo.biWidth,4,1,plik);
+        fread(&PictureInfo.biHeight,4,1,plik);
+        fread(&PictureInfo.biPlanes,2,1,plik);
+        fread(&PictureInfo.biBitCount,2,1,plik); 
+    	fread(&PictureInfo.biCompression,4,1,plik);
+    	fread(&PictureInfo.biSizeImage,4,1,plik);
+        fread(&PictureInfo.biXPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biYPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biClrUsed,4,1,plik);
+        fread(&PictureInfo.biClrImportant,1,1,plik);
+        fread(&PictureInfo.biClrRotation,1,1,plik);
+          				
+		
+
+
+		PixelRGB pixmap[PictureInfo.biWidth][PictureInfo.biHeight];
+		
+		//obliczenie wyrównania wiersza do wielokrotności 4B
+        if ((PictureInfo.biWidth * 3) % 4 != 0) padding = 4 - ((PictureInfo.biWidth * 3) % 4);
+        
+		//wczytywanie bitmapy do pixmapy
+		fseek(plik, FileInfo.dataOffset,SEEK_SET);
+		for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik, padding, SEEK_CUR))
+			for(j = 0; j < PictureInfo.biWidth; j++)
+			{
+                pixmap[i][j].B = fgetc(plik); 
+                pixmap[i][j].G = fgetc(plik);
+                pixmap[i][j].R = fgetc(plik);
+            }
+        
+		//operacje na nowym pliku    
+        if(plik2 = fopen("nowy3.bmp","wb"))
+           {        
+		   		//kopiowanie pliku
+                fseek(plik, 0, SEEK_END);
+                j = ftell(plik);
+                fseek(plik, 0, SEEK_SET);
+                for(i = 0; i < j; i++)
+                    fputc(fgetc(plik), plik2);
+                //zapis bitmapy                   
+                fseek(plik2, FileInfo.dataOffset, SEEK_SET);
+                for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik2, padding, SEEK_CUR))
+                    for(j = 0; j < PictureInfo.biWidth; j++)
+                    {
+                   
+						fputc(0, plik2);
+                    	fputc(0, plik2);
+						fputc(pixmap[i][j].R, plik2);
+
+                    }
+                fclose(plik2);  
+                
+           }
+           else cout << "Blad w odczycie pliku"; 
+		   info(PictureInfo.biHeight, PictureInfo.biWidth, PictureInfo.biSizeImage); 
+		
+		
+	}else cout << "Blad w odczycie pliku";
+}
+
+void wyodrebnienieG(const char * nazwaPliku)
+{
+	FILE *plik, *plik2;
+	naglowek FileInfo;
+	bib PictureInfo;
+	int i, j;
+	short padding;
+	
+	
+					
+					
+	if(plik = fopen(nazwaPliku,"rb"))
+	{
+		//FileInfo
+		fread(&FileInfo.type,2,1,plik);
+        fread(&FileInfo.fileSize,4,1,plik); // rozmiar calego pliku w bitach
+        fread(&FileInfo.reserved0,2,1,plik);
+        fread(&FileInfo.reserved1,2,1,plik);
+        fread(&FileInfo.dataOffset,4,1,plik); // poczatkowy adres bitow w tablicy pikseli
+        
+        //PictureInfo
+		fread(&PictureInfo.biSize,4,1,plik);
+        fread(&PictureInfo.biWidth,4,1,plik);
+        fread(&PictureInfo.biHeight,4,1,plik);
+        fread(&PictureInfo.biPlanes,2,1,plik);
+        fread(&PictureInfo.biBitCount,2,1,plik); 
+    	fread(&PictureInfo.biCompression,4,1,plik);
+    	fread(&PictureInfo.biSizeImage,4,1,plik);
+        fread(&PictureInfo.biXPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biYPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biClrUsed,4,1,plik);
+        fread(&PictureInfo.biClrImportant,1,1,plik);
+        fread(&PictureInfo.biClrRotation,1,1,plik);
+          				
+		
+
+
+		PixelRGB pixmap[PictureInfo.biWidth][PictureInfo.biHeight];
+		
+		//obliczenie wyrównania wiersza do wielokrotności 4B
+        if ((PictureInfo.biWidth * 3) % 4 != 0) padding = 4 - ((PictureInfo.biWidth * 3) % 4);
+        
+		//wczytywanie bitmapy do pixmapy
+		fseek(plik, FileInfo.dataOffset,SEEK_SET);
+		for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik, padding, SEEK_CUR))
+			for(j = 0; j < PictureInfo.biWidth; j++)
+			{
+                pixmap[i][j].B = fgetc(plik); 
+                pixmap[i][j].G = fgetc(plik);
+                pixmap[i][j].R = fgetc(plik);
+            }
+        
+		//operacje na nowym pliku    
+        if(plik2 = fopen("nowy3.bmp","wb"))
+           {        
+		   		//kopiowanie pliku
+                fseek(plik, 0, SEEK_END);
+                j = ftell(plik);
+                fseek(plik, 0, SEEK_SET);
+                for(i = 0; i < j; i++)
+                    fputc(fgetc(plik), plik2);
+                //zapis bitmapy                       
+                fseek(plik2, FileInfo.dataOffset, SEEK_SET);
+                for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik2, padding, SEEK_CUR))
+                    for(j = 0; j < PictureInfo.biWidth; j++)
+                    {
+    
+     					fputc(0, plik2);
+                    	fputc(pixmap[i][j].G, plik2);
+						fputc(0, plik2);
+							
+                    }
+                fclose(plik2);  
+                
+           }
+           else cout << "Blad w odczycie pliku";  
+           info(PictureInfo.biHeight, PictureInfo.biWidth, PictureInfo.biSizeImage);
+		
+		
+	}else cout << "Blad w odczycie pliku";
+}
+
+void wyodrebnienieB(const char * nazwaPliku)
+{
+	FILE *plik, *plik2;
+	naglowek FileInfo;
+	bib PictureInfo;
+	int i, j;
+	short padding;
+	
+	
+					
+					
+	if(plik = fopen(nazwaPliku,"rb"))
+	{
+		//FileInfo
+		fread(&FileInfo.type,2,1,plik);
+        fread(&FileInfo.fileSize,4,1,plik); // rozmiar calego pliku w bitach
+        fread(&FileInfo.reserved0,2,1,plik);
+        fread(&FileInfo.reserved1,2,1,plik);
+        fread(&FileInfo.dataOffset,4,1,plik); // poczatkowy adres bitow w tablicy pikseli
+        
+        //PictureInfo
+		fread(&PictureInfo.biSize,4,1,plik);
+        fread(&PictureInfo.biWidth,4,1,plik);
+        fread(&PictureInfo.biHeight,4,1,plik);
+        fread(&PictureInfo.biPlanes,2,1,plik);
+        fread(&PictureInfo.biBitCount,2,1,plik); 
+    	fread(&PictureInfo.biCompression,4,1,plik);
+    	fread(&PictureInfo.biSizeImage,4,1,plik);
+        fread(&PictureInfo.biXPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biYPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biClrUsed,4,1,plik);
+        fread(&PictureInfo.biClrImportant,1,1,plik);
+        fread(&PictureInfo.biClrRotation,1,1,plik);
+          				
+		
+
+
+		PixelRGB pixmap[PictureInfo.biWidth][PictureInfo.biHeight];
+		
+		//obliczenie wyrównania wiersza do wielokrotności 4B
+        if ((PictureInfo.biWidth * 3) % 4 != 0) padding = 4 - ((PictureInfo.biWidth * 3) % 4);
+        
+		//wczytywanie bitmapy do pixmapy
+		fseek(plik, FileInfo.dataOffset,SEEK_SET);
+		for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik, padding, SEEK_CUR))
+			for(j = 0; j < PictureInfo.biWidth; j++)
+			{
+                pixmap[i][j].B = fgetc(plik); 
+                pixmap[i][j].G = fgetc(plik);
+                pixmap[i][j].R = fgetc(plik);
+            }
+        
+		//operacje na nowym pliku    
+        if(plik2 = fopen("nowy3.bmp","wb"))
+           {        
+		   		//kopiowanie pliku
+                fseek(plik, 0, SEEK_END);
+                j = ftell(plik);
+                fseek(plik, 0, SEEK_SET);
+                for(i = 0; i < j; i++)
+                    fputc(fgetc(plik), plik2);
+                //zapis bitmapy                      
+                fseek(plik2, FileInfo.dataOffset, SEEK_SET);
+                for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik2, padding, SEEK_CUR))
+                    for(j = 0; j < PictureInfo.biWidth; j++)
+                    {
+    
+     					fputc(pixmap[i][j].B, plik2);
+                    	fputc(0, plik2);
+						fputc(0, plik2);
+							
+                    }
+                fclose(plik2);  
+                info(PictureInfo.biHeight, PictureInfo.biWidth, PictureInfo.biSizeImage);
+                
+           }
+           else cout << "Blad w odczycie pliku";  
+		
+		
+	}else cout << "Blad w odczycie pliku";
+}
+
+void blur(const char * nazwaPliku)
+{
+	FILE *plik, *plik2;
+	naglowek FileInfo;
+	bib PictureInfo;
+	int i, j;
+	short padding;
+	char blurR, blurB, blurG;
+	
+	
+					
+					
+	if(plik = fopen(nazwaPliku,"rb"))
+	{
+		//FileInfo
+		fread(&FileInfo.type,2,1,plik);
+        fread(&FileInfo.fileSize,4,1,plik); // rozmiar calego pliku w bitach
+        fread(&FileInfo.reserved0,2,1,plik);
+        fread(&FileInfo.reserved1,2,1,plik);
+        fread(&FileInfo.dataOffset,4,1,plik); // poczatkowy adres bitow w tablicy pikseli
+        
+        //PictureInfo
+		fread(&PictureInfo.biSize,4,1,plik);
+        fread(&PictureInfo.biWidth,4,1,plik);
+        fread(&PictureInfo.biHeight,4,1,plik);
+        fread(&PictureInfo.biPlanes,2,1,plik);
+        fread(&PictureInfo.biBitCount,2,1,plik); 
+    	fread(&PictureInfo.biCompression,4,1,plik);
+    	fread(&PictureInfo.biSizeImage,4,1,plik);
+        fread(&PictureInfo.biXPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biYPelsPerMeter,4,1,plik);
+        fread(&PictureInfo.biClrUsed,4,1,plik);
+        fread(&PictureInfo.biClrImportant,1,1,plik);
+        fread(&PictureInfo.biClrRotation,1,1,plik);
+          				
+		
+
+
+		PixelRGB pixmap[PictureInfo.biWidth][PictureInfo.biHeight];
+		
+		//obliczenie wyrównania wiersza do wielokrotności 4B
+        if ((PictureInfo.biWidth * 3) % 4 != 0) padding = 4 - ((PictureInfo.biWidth * 3) % 4);
+        
+		//wczytywanie bitmapy do pixmapy
+		fseek(plik, FileInfo.dataOffset,SEEK_SET);
+		for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik, padding, SEEK_CUR))
+			for(j = 0; j < PictureInfo.biWidth; j++)
+			{
+                pixmap[i][j].B = fgetc(plik); 
+                pixmap[i][j].G = fgetc(plik);
+                pixmap[i][j].R = fgetc(plik);
+            }
+        
+		//operacje na nowym pliku    
+        if(plik2 = fopen("nowy3.bmp","wb"))
+           {        
+		   		//kopiowanie pliku
+                fseek(plik, 0, SEEK_END);
+                j = ftell(plik);
+                fseek(plik, 0, SEEK_SET);
+                for(i = 0; i < j; i++)
+                    fputc(fgetc(plik), plik2);
+                //zapis bitmapy                      
+                fseek(plik2, FileInfo.dataOffset, SEEK_SET);
+                for(i = 0; i < PictureInfo.biHeight; i++, fseek(plik2, padding, SEEK_CUR))
+                    for(j = 0; j < PictureInfo.biWidth; j++)
+                    {
+    					
+    					// BLUR R
+    					
+    					char aR = pixmap[i-1][j-1].R;
+						char bR = pixmap[i][j-1].R;
+						char cR = pixmap[i+1][j-1].R;
+						
+						char dR = pixmap[i-1][j].R;
+						char xR = pixmap[i][j].R;
+						char eR = pixmap[i+1][j].R;
+						
+						char fR = pixmap[i-1][j+1].R;
+						char gR = pixmap[i][j+1].R;
+						char hR = pixmap[i+1][j+1].R;
+						
+						// BLUR G
+						
+						char aG = pixmap[i-1][j-1].G;
+						char bG = pixmap[i][j-1].G;
+						char cG = pixmap[i+1][j-1].G;
+						
+						char dG = pixmap[i-1][j].G;
+						char xG = pixmap[i][j].G;
+						char eG = pixmap[i+1][j].G;
+						
+						char fG = pixmap[i-1][j+1].G;
+						char gG = pixmap[i][j+1].G;
+						char hG = pixmap[i+1][j+1].G;
+						
+						// BLUR B
+						
+						char aB = pixmap[i-1][j-1].B;
+						char bB = pixmap[i][j-1].B;
+						char cB = pixmap[i+1][j-1].B;
+						
+						char dB = pixmap[i-1][j].B;
+						char xB = pixmap[i][j].B;
+						char eB = pixmap[i+1][j].B;
+						
+						char fB = pixmap[i-1][j+1].B;
+						char gB = pixmap[i][j+1].B;
+						char hB = pixmap[i+1][j+1].B;
+					
+						
+						blurR = (aR+bR+cR+dR+xR+eR+fR+gR+hR) / 9; //(aR+bR+cR+dR+xR+eR+fR+gR+hR)
+						blurG = (aG+bG+cG+dG+xG+eG+fG+gG+hG) / 9;
+						blurB = (aB+bB+cB+dB+xB+eB+fB+gB+hB) / 9;
+    					
+    					
+     					fputc(blurB, plik2);
+                    	fputc(blurG, plik2);
+						fputc(blurR, plik2);
+					
+                    }
+                fclose(plik2);  
+                info(PictureInfo.biHeight, PictureInfo.biWidth, PictureInfo.biSizeImage);
+                
+           }
+           else cout << "Blad w odczycie pliku";  
+		
+		
+	}else cout << "Blad w odczycie pliku";
+}
+
+int main()
+{
+
+
+	int opcja;
+	do
+	{
+		menu();
+		cin >> opcja;
+		switch(opcja)
+		{
+			case 1:
+			{
+				skala_szarosci("test.bmp");
+			}
+			break;
+			case 2:
+				{
+					int opcja2;
+					do
+					{
+						drugi_wybor();
+						cin >> opcja2;
+						switch(opcja2)
+						{
+							case 1:
+								{
+									wyodrebnienieB("test.bmp");
+								}
+							break;
+							case 2:
+								{
+									wyodrebnienieG("test.bmp");
+								}	
+							break;
+							case 3:
+								{
+									wyodrebnienieR("test.bmp");
+								}
+							break;	
+						}
+					}while(opcja2);
+				}
+			break;
+			case 3:	
+			{
+				blur("test.bmp");
+			}
+			break;	
+		}
+	}while(opcja);
+
+}
